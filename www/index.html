@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Bootstrap 101 Template</title>
+
+    <!-- Default Bootstrap Styles loaded-->
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+    <!-- Loading our own styles and modifications to bootstrap styles-->
+    <link href="css/classpic_styles.css" rel="stylesheet"> 
+    <!-- <link href="css/small.css" rel="stylesheet">
+     Loading the main font -->
+    <link href='http://fonts.googleapis.com/css?family=Open+Sans' rel='stylesheet' type='text/css'>
+
+     </head>
+  <body>
+  
+      <script language="javascript">
+
+/*This Script http://www.javascriptkit.com/script/cut76.shtml*/
+function pasuser(form) {
+if (form.id.value=="guest") { 
+if (form.pass.value=="123") {              
+location="home.html" 
+} else {
+alert("Invalid Password")
+}
+} else {  alert("Invalid UserID")
+}
+}
+
+</script>
+<!--div that houses all other divs-->
+ <div id="main-house">
+  <!--Using the bootstrap grid to layout this particular page-->
+    <div class="container">
+    <div class= "row">  
+ <div class= "col-xs-3 col-sm-2 col-md-3 col-lg-3 col-xl-3">
+      </div>
+    <div class= "col-xs-6 col-sm-8 col-md-6 col-lg-6 col-xl-6">
+       <!--Using the bootstrap Jumbotron to display the login form-->
+    <div class= "jumbotron">
+       <form class="form-signin" name ="login" role="form">
+
+    <img src="images/classpic_white_logo.png" class="img-responsive" alt="Class Pic Logo">    
+<!--input for username set above-->
+       <input name="id" type="text" placeholder="Username" class="form-control"  required autofocus>  
+<!--input for password set above-->
+        <input name="pass" type="password" placeholder="Password" class="form-control" required>
+<!--sign in button-->
+        <button class="btn btn-lg btn-success btn-block" input type="button" value ="Login"  onClick="pasuser(this.form)">Sign in</button>
+<!--remembering password-->
+         <button type="forgot password" class="btn btn-default btn-block"> Forgot Password ?</button>
+      </form>
+
+    </div>
+  </div>
+
+
+<div class= "col-xs-3 col-sm-2 col-md-3 col-lg-3 col-xl-3">
+      </div>
+    </div>
+</div>
+</div>
+
+      
+    
+
+    <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
+    <!-- Include all compiled plugins (below), or include individual files as needed -->
+    <script src="js/bootstrap.min.js"></script>
+  </body>
+</html>

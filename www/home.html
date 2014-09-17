@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Capture Photo</title>
+	<meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <!-- from here https://gist.github.com/dhavaln/2238017 -->
+    <meta name="viewport" content="width=device-width,height=device-height,initial-scale=1"/>
+<!-- loading the default bootstrap style sheet-->    
+<link href="css/bootstrap.min.css" rel="stylesheet">
+<!-- Our own style sheet -->
+<link href="css/classpic_styles.css" rel="stylesheet">
+
+<!-- loading what is the main body font--> 
+<link href='http://fonts.googleapis.com/css?family=Open+Sans:400italic,600italic,400,600'
+rel='stylesheet' type='text/css'>
+<!--loading font for icons-->
+<link rel="stylesheet" href="font-awesome-4.1.0/css/font-awesome.min.css">
+<!-- prepping for phonegap packaging--> 
+<script src="phonegap.js"></script>
+<script type="text/javascript" charset="utf-8">
+
+  
+  function onPhotoFileSuccess(imageData) {
+        alert ("something");
+        var userPhoto = document.getElementById('userPhoto');
+ 
+        userPhoto.style.display = 'block';
+ 
+        userPhoto.src = imageData;
+    }
+
+ function capturePhotoWithFile() {
+        navigator.camera.getPicture(onPhotoFileSuccess, onFail, {
+            quality: 50, 
+            destinationType: Camera.DestinationType.FILE_URI,
+            saveToPhotoAlbum: true,
+            targetWidth: 200,
+            targetHeight: 300,
+        });
+    }
+
+   function onFail(message) {
+        alert('Failed because: ' + message);
+    }
+ 
+</script>
+    
+</head>
+
+<body>
+
+<!--Outer div that houses other items-->
+<div id="main-house">
+<!--Next two divs are hidded until the final upload happens,
+ones a bootstrap alert and the div wrapping it is its transparent backdrop-->	
+<div id="upload-backdrop">
+<div id="uploaded" class="alert alert-success alert-dismissible" role="alert">
+  <button type="button" class="close" data-dismiss="alert" onclick="returnHome()"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+  Upload Successful!
+</div>
+</div>
+<!-- div that houses the preview of the image that is loaded from the gallery after been taken on device camera-->
+<div class="image-holder" id="grey">
+
+ <output id="list"></output>
+    
+</div>
+
+<!-- div that contains the form for setting the parameters needed to refine the student names and statements on the second stage-->
+<div class="form-holder" id='params'>
+<!-- div that contains the select menu elements and the submit button-->
+  <div class="forms">
+		 <form name = "userclass" required>
+	<select class="form-control" name='class' onChange = "classid = this.value" id='class' >
+		<option value='0' selected disabled><em>Select Class Year</em></option>
+		<option value='674' required>EYNAA</option>
+		<option value='675' required>EYRAA</option>
+	</select>
+
+        </form>
+    <form name = "userprofile" required>
+
+	<select class="form-control" name='profile' onChange= "profileid = this.value" id='profile' >
+        <option value='0' selected disabled><em>Select Class Profile</em></option>
+		<option value='ELG'>Early learning Goals</option>
+		<option value='EYFS2436'>Early Years Foundation Stage 2436</option>
+		<option value='EYFS3648'>Early Years Foundation Stage 3648</option>
+	</select>
+
+        </form>  
+  <form name ="usercomponent" required>
+
+	<select class="form-control" name='component' onChange="componentid = this.value" id='component' required>
+		<option value='0' selected disabled>Select Skill Component</option>
+            <option value='PSED:SCSA'>PSED: Self-confidence and Self-awareness</option>
+            <option value='PSED:MFB'>PSED: Managing Feeling and Behaviour</option>
+            <option value='PSED:MR'>PSED: Making Relationships</option>
+            <option value='PD:MH'>PD: Moving and Handling</option>
+            <option value='PD:HSC'>PD: Health and Self-care</option>
+            <option value='CL:LA'>CL: Listening and Attention</option>
+            <option value='CL:U'>CL: Understanding</option>
+            <option value='CL:S'>CL: Speaking</option>
+            <option value='L:R'>L: Reading</option>
+            <option value='L:W'>L: Writing</option>
+            <option value='M:N'>M: Numbers</option>
+            <option value='M:SSM'>M: Shape, Space, and Measure</option>
+			<option value='UW:PC'>UW: People and Communities</option>
+            <option value='UW:TW'>UW: The World</option>
+            <option value='EAD:EMM'>EAD: Exlporing and using Media and Materials</option>
+            <option value='EAD:BI'>EAD: Being Imaginative</option>
+	</select>
+
+        </form>	
+<!-- submit button for all 3 select menus above-->
+	<button class="btn btn-success btn-block" input type="button" value='Go' onclick="submit();">Load Class Settings</button>
+
+
+</div><!--end of forms div-->
+
+</div><!--end of div with id 'params' and class form-holder-->
+
+
+<!--When parameters are selected on the form in 'params' div above this window will be seen, where the teacher is able to select students, a statement and upload multiples pictures-->
+<div id='statementsbody' class="form-holder" style='display:none;'>
+<div class="forms">
+<!-- this div contains button for selecting the picture file to be uploaded-->        
+<div class="button-row"><span class="btn btn-success btn-block">Select Photo<input type="file" name="img" id='photo' multiple/></span></div>
+<!-- this div contains button for opening the modal window containing student names to be selected--> 	
+<div class="button-row"><button class="btn btn-default btn-lg btn-block" data-toggle="modal" data-target="#stu-sel"><span class="fa"><i class="fa fa-tags"></i></span>Select Students
+</button></div>
+
+<!-- Modal dialog that appears when the 'Students' button is selected-->
+<div class="modal fade" id="stu-sel" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+        <h4 class="modal-title" id="myModalLabel">Select Students</h4>
+      </div>
+      <div class="modal-body">
+      	<!--This div is dynamically loaded with Student names-->
+        <div id="students"></div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+<!--(end of first modal, back to statementbody form)-->
+<!-- this div contains button for opening the modal window containing statements to be selected--> 
+<div class="button-row"><button class="btn btn-default btn-lg btn-block" data-toggle="modal" data-target="#state_sel"><span class="fa fa-star"></span>Statements</button></div>
+<!-- Modal dialog that appears when the 'Statements' button is selected-->
+<div class="modal fade" id="state_sel" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+       <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+        <h4 class="modal-title" id="myModalLabel">Select Statements</h4>
+      </div>
+      <div class="modal-body">
+      	<!--This div is dynamically loaded with Statements-->
+        <div id="statements"></div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+<!--(end of second modal, back to statementbody form)-->	
+<!--Text box for adding any additional comments-->
+<div class="button-row"><textarea rows="4" id="user-comments" placeholder="Comments">
+</textarea></div>
+<!--Now, upload to all selections to Classis website-->
+<div class="button-row"><input class="btn btn-success btn-block" type="button" value='Upload' onupload=" " onclick="return upload();">
+</div>
+</div>
+</div>
+<!--end of div class 'form-holder' and its 2 forms-->
+
+<!--right hand div that contains the camera operation icon--> 
+<div class="right-side">
+	<!--image on top-right of screen-->
+<div class="classpic"><img src="images/classpic_mini_tran.png">
+</div>
+<div class="camera-panel">
+	<!--icon that loads device camera through script loaded in the head of this page-->
+<button class="camera-icon" onclick="capturePhotoWithFile();"><span class="fa fa-camera"></span></button>
+</div>
+<!--icon turned to a button to open an 'about' page-->
+<div class="about"><a href="about.html"><button class="fa fa-info-circle"></button></a>
+	</div>
+</div>
+</div>
+
+
+<script>
+
+	/*Local stored apiURL,username,token,schoolid*/
+	var apiURL='http://demo.learningdata.net/apis/classis';
+	var user='admin2';
+	var token='132fbdf473cd76432357a3e146032b28';
+	var schoolid='demoes';
+	var classid=document.userclass.class.value;
+	var componentid= document.usercomponent.component.value;
+	var profileid=document.userprofile.profile.value;
+
+
+	function statementsbody(){
+		document.getElementById('statementsbody').style.display='table-cell';
+
+		/*Get classes*/
+		var xmlhttpc=new XMLHttpRequest();
+		xmlhttpc.onreadystatechange=function(){
+			if(xmlhttpc.readyState==4 && xmlhttpc.status==200){
+				var data=JSON.parse(xmlhttpc.responseText);
+				if(data.success){
+					console.log(data.classes);
+					}
+				}
+			}
+		xmlhttpc.open("GET",apiURL+"?schoolid="+schoolid+"&username="+user+"&token="+token+"&action=getclasses",true);
+		xmlhttpc.send();
+
+/*Get students*/
+		var xmlhttp=new XMLHttpRequest();
+		xmlhttp.onreadystatechange=function(){
+			if(xmlhttp.readyState==4 && xmlhttp.status==200){
+				var data=JSON.parse(xmlhttp.responseText);
+				if(data.success){
+					console.log(data.students);
+					
+					for(i=0;i<data.students.length;i++){
+						var studentdiv=document.createElement('div');
+						studentdiv.id="student";
+						studentdiv.innerHTML="<div class='checkbox'><label><input type='checkbox' name='students[]' value='"+data.students[i].sid+"'>"+data.students[i].forename+" "+data.students[i].surname+"</label></div><div class='stud_img'><img src='"+data.students[i].profilephoto+"'></div>";
+						document.getElementById('students').appendChild(studentdiv);
+						}
+					}
+			
+				}
+			}
+		xmlhttp.open("GET",apiURL+"?schoolid="+schoolid+"&username="+user+"&token="+token+"&action=getstudents&classid="+classid,true);
+		xmlhttp.send();
+        
+/*Get statements*/
+		var xmlhttps=new XMLHttpRequest();
+		xmlhttps.onreadystatechange=function(){
+			if(xmlhttps.readyState==4 && xmlhttps.status==200){
+				var data=JSON.parse(xmlhttps.responseText);
+				if(data.success){
+					console.log(data.statements);
+					for(i=0;i<data.statements.length;i++){
+
+						var statementdiv=document.createElement('div');
+						statementdiv.id="statement";
+						var str = data.statements[i].statement;
+						var newstatement = str.replace ("^", " ").replace ("#", " ");
+						statementdiv.innerHTML="<div class='radio'><label><input type='radio' name='statement' value='"+data.statements[i].skillid+"'>"+newstatement+"</label></div>";
+						document.getElementById('statements').appendChild(statementdiv);
+						}
+
+					}
+				}
+			}
+		xmlhttps.open("GET",apiURL+"?schoolid="+schoolid+"&username="+user+"&token="+token+"&action=getstatements&componentid="+componentid+"&profileid="+profileid,true);
+		xmlhttps.send();
+		}
+    if (window.FileReader) {
+      function handleFileSelect(evt) {
+        var files = evt.target.files;
+        var f = files[0];
+        var reader = new FileReader();
+		
+          reader.onload = (function(theFile) {
+            return function(e) {
+              document.getElementById('list').innerHTML = ['<img src="', e.target.result,'" title="', theFile.name,'" width="100%"/>'].join('');
+              // http://stackoverflow.com/questions/10468108/how-do-i-change-background-color-of-div-using-javascript-function;
+              document.getElementById('grey').style.backgroundColor = "rgba(64,64,64,0.8)";
+            };
+          })(f);
+    
+          reader.readAsDataURL(f);
+      }
+	 } else {
+	  alert('This browser does not support FileReader');
+	}
+    
+      document.getElementById('photo').addEventListener('change', handleFileSelect, false);
+    
+		/*Upload pictures*/
+		var upload=function() {
+			var photo=document.getElementById("photo");
+			var files=photo.files;
+			var imagesdata={};
+			for(var i=0;i<files.length;i++){
+				var reader=new FileReader();
+				reader.onload = (function(theFile){
+					var fileName=theFile.name;
+					var count=i;
+					var filesno=files.length-1;
+					return function(e){
+						imagesdata[count]={};
+						imagesdata[count]['photo']=e.target.result;
+						imagesdata[count]['name']=fileName;
+						//document.getElementById('preview').src=e.target.result;
+						if(count==filesno){
+							
+							var checkboxes=document.getElementsByName('students[]');
+							var checkedCheckboxes={};
+							for(var i=0; i<checkboxes.length; i++) {
+								if(checkboxes[i].checked){
+									checkedCheckboxes[i]=checkboxes[i].value;
+									}
+								}
+								var comments = document.getElementById("user-comments").value;
+								
+						//**** This is existing radiobutton upload code 
+
+							var radiobuttons=document.getElementsByName('statement');
+							var checkedRadio='';
+							for (var i=0; i<radiobuttons.length; i++) {
+								if(radiobuttons[i].checked){
+									checkedRadio=radiobuttons[i].value;
+									}
+								}
+
+							var xmlhttpf=new XMLHttpRequest();
+							xmlhttpf.onreadystatechange=function(){
+								if(xmlhttpf.readyState==4 && xmlhttpf.status==200){
+									console.log(xmlhttpf.responseText);
+									var data=JSON.parse(xmlhttpf.responseText);
+									console.log(data);
+									if(data.success){
+										/*added this to display both upload alert and the backdrop for the alert*/
+										document.getElementById('upload-backdrop').style.display='block', document.getElementById('uploaded').style.display='block';
+										//location = "home.html";
+										}
+									}
+								};
+							xmlhttpf.open("POST",apiURL+"?schoolid="+schoolid+"&username="+user+"&token="+token+"&action=poststatementphoto&post=true",true);
+							xmlhttpf.setRequestHeader('Content-Type', 'application/json; charset=UTF-8');
+							xmlhttpf.send(JSON.stringify({students:checkedCheckboxes,photos:imagesdata,skillid:checkedRadio,comment:comments}));
+							}
+						};
+					})(files[i]);
+
+				reader.readAsDataURL(files[i]);
+				}
+
+			return false;
+			};
+    
+    
+		document.getElementById('register').style.display='block';
+		function register(){
+			/*Makes call to get the schools: http://demo.learningdata.net/apis/classis?email=EMAIL&action=getschools*/
+			/*Stores the schoolid and email on the phone*/
+			document.getElementById('register').style.display='none';
+			document.getElementById('config').style.display='block';
+			/*Sends query with email and schoolid*/
+			/*Receives username and token by email to insert them in the next step*/
+			}
+
+		function configure(){
+			document.getElementById('config').style.display='none';
+			/*Stores the username and token for api calls*/
+			document.getElementById('params').style.display='block';
+			}
+
+		function submit(){
+            document.getElementById('params').style.display='none';
+			/*Makes the calls sending the necessary parameters*/
+			/*No need for storing any parameter*/
+			statementsbody();
+			}
+			/*http://stackoverflow.com/questions/3682805/javascript-load-a-page-on-button-click......This is a function that operates when the sucess alert is closed*/
+		function returnHome(){	
+			window.location.href="home.html";
+		}
+			
+</script>
+
+   </div>
+   </div> 
+</div>
+
+ <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
+
+    <!-- Include all compiled plugins (below), or include individual files as needed -->
+    <script src="js/bootstrap.min.js"></script>
+    <script src="select/bootstrap-select.js"></script>   
+</body>
+</html>
